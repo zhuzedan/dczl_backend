@@ -1,6 +1,11 @@
 server:
   port: 1919
-
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: is_deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
 spring:
   datasource:
     dynamic:
