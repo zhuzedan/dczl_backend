@@ -1,5 +1,8 @@
 package com.zsdzxw.dzclxt.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zsdzxw.dzclxt.common.Result;
 import com.zsdzxw.dzclxt.entity.dto.*;
 import com.zsdzxw.dzclxt.entity.model.Appraise;
@@ -9,19 +12,22 @@ import com.zsdzxw.dzclxt.entity.model.User;
 import com.zsdzxw.dzclxt.entity.vo.AppraiseVO;
 import com.zsdzxw.dzclxt.entity.vo.OrderVO;
 import com.zsdzxw.dzclxt.entity.vo.PageVO;
+import com.zsdzxw.dzclxt.service.BikeService;
 import com.zsdzxw.dzclxt.service.DczlxtService;
-import io.undertow.util.DateUtils;
+import com.zsdzxw.dzclxt.util.PageHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/dczlxt")
@@ -30,6 +36,8 @@ public class DczlxtController {
     @Autowired
     private DczlxtService dczlxtService;
 
+    @Autowired
+    private BikeService bikeService;
     @PostMapping("/login")
     public Result login(@RequestBody LoginDTO dto){
         User user = dczlxtService.getUserByNameOrTeleAndPassword(dto);
@@ -270,19 +278,18 @@ public class DczlxtController {
     }
 
     @PostMapping("/getBikes")
-    public Result getBikes(@RequestBody PageDTO dto){
-        if (dto.getPageSize() == 0 && dto.getPageSize() == 0){
-            List<Bike> bikes = dczlxtService.getAllBike();
-            Long totel = Long.parseLong(bikes.size()+"");
-            return Result.success(new PageVO(totel,bikes));
+    public Result getBikes(@RequestBody BikeFilterDto dto){
+        Page<Bike> page = new Page<>(dto.getPageNo(), dto.getPageSize());
+        LambdaQueryWrapper<Bike> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if (!StringUtils.isEmpty(dto.getLowPrice())) {
+            lambdaQueryWrapper.ge(Bike::getBikeCost,dto.getLowPrice());
         }
-        List<Bike> bikes = dczlxtService.getAllBike();
-        Long totel = Long.parseLong(bikes.size()+"");
-        Integer pageNo = dto.getPageNo();
-        Integer pageSize = dto.getPageSize();
-        dto.setPageNo((pageNo-1)*pageSize);
-        dto.setPageSize(pageNo*pageSize);
-        return Result.success(new PageVO(totel,dczlxtService.getPageBikes(dto.getPageNo(),dto.getPageSize())));
+        if (!StringUtils.isEmpty(dto.getHighPrice())) {
+            lambdaQueryWrapper.le(Bike::getBikeCost,dto.getHighPrice());
+        }
+        IPage<Bike> iPage = bikeService.page(page, lambdaQueryWrapper);
+        PageHelper<Bike> storePageHelper = PageHelper.restPage(iPage);
+        return Result.success(storePageHelper);
     }
 
 }

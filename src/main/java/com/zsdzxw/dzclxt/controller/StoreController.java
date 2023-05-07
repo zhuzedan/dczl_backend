@@ -7,8 +7,6 @@ import com.zsdzxw.dzclxt.common.Result;
 import com.zsdzxw.dzclxt.common.ResultCode;
 import com.zsdzxw.dzclxt.entity.dto.PageDTO;
 import com.zsdzxw.dzclxt.entity.model.Store;
-import com.zsdzxw.dzclxt.entity.model.User;
-import com.zsdzxw.dzclxt.entity.vo.PageVO;
 import com.zsdzxw.dzclxt.service.StoreService;
 import com.zsdzxw.dzclxt.util.PageHelper;
 import io.swagger.annotations.ApiOperation;
@@ -27,9 +25,18 @@ import java.util.List;
 public class StoreController {
     @Autowired
     private StoreService storeService;
+
+    @PostMapping("/getAllStore")
+    public Result getAllStore() {
+        LambdaQueryWrapper<Store> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Store::getStatus, 1);
+        List<Store> list = storeService.list(lambdaQueryWrapper);
+        return Result.success(list);
+    }
+
     @PostMapping("/getStorePage")
-    public Result getStorePage(@RequestBody PageDTO dto){
-        Page<Store> page = new Page<>(dto.getPageNo(),dto.getPageSize());
+    public Result getStorePage(@RequestBody PageDTO dto) {
+        Page<Store> page = new Page<>(dto.getPageNo(), dto.getPageSize());
         LambdaQueryWrapper<Store> lambdaQueryWrapper = new LambdaQueryWrapper<>();
 
         IPage<Store> iPage = storeService.page(page, lambdaQueryWrapper);
@@ -43,7 +50,7 @@ public class StoreController {
         boolean flag = storeService.save(store);
         if (flag) {
             return Result.success(null);
-        }else {
+        } else {
             return Result.fail(ResultCode.API_AUTH_FAIL);
         }
     }
@@ -61,8 +68,7 @@ public class StoreController {
         boolean flag = storeService.removeById(id);
         if (flag) {
             return Result.success(null);
-        }
-        else {
+        } else {
             return Result.fail(ResultCode.API_AUTH_FAIL);
         }
     }
