@@ -43,38 +43,11 @@ public class AppraiseController {
             frontAppraiseVO.setAppraiseDescription(appraise.getAppraiseDescription());
             Bike bike = dczlxtService.getBikeById(appraise.getBikeId());
             frontAppraiseVO.setBikeName(bike.getBikeName());
+            frontAppraiseVO.setBikeUrl(bike.getBikeUrl());
             frontAppraiseVOS.add(frontAppraiseVO);
         }
         return Result.success(frontAppraiseVOS);
     }
 
-    // @ApiOperation(value = "新增数据")
-    // @PostMapping("/insertAppraise")
-    // public Result insert(@RequestBody Appraise appraise) {
-    //     boolean flag = appraiseService.save(appraise);
-    //     if (flag) {
-    //         return Result.success(null);
-    //     } else {
-    //         return Result.fail(ResultCode.API_AUTH_FAIL);
-    //     }
-    // }
-    //
-    // @ApiOperation(value = "修改数据")
-    // @PostMapping("/updateAppraise")
-    // public Result update(@RequestBody Appraise appraise) {
-    //     appraiseService.updateById(appraise);
-    //     return Result.success(null);
-    // }
-    //
-    // @ApiOperation(value = "删除数据")
-    // @DeleteMapping("/deleteAppraise")
-    // public Result delete(Long id) {
-    //     boolean flag = appraiseService.removeById(id);
-    //     if (flag) {
-    //         return Result.success(null);
-    //     } else {
-    //         return Result.fail(ResultCode.API_AUTH_FAIL);
-    //     }
-    // }
 }
 

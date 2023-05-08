@@ -15,4 +15,5 @@ public class FrontAppraiseVO extends Appraise {
     private String userName;
 
     private String bikeName;
+    private String bikeUrl;
 }
