@@ -60,6 +60,7 @@ public class OrderVO extends Order {
      */
     private int appraiseStar;
 
+    private Long rentalTime;
 
 
 }

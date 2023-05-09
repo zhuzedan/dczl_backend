@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zsdzxw.dzclxt.common.Result;
 import com.zsdzxw.dzclxt.entity.dto.*;
-import com.zsdzxw.dzclxt.entity.model.Appraise;
-import com.zsdzxw.dzclxt.entity.model.Bike;
-import com.zsdzxw.dzclxt.entity.model.Order;
-import com.zsdzxw.dzclxt.entity.model.User;
+import com.zsdzxw.dzclxt.entity.model.*;
 import com.zsdzxw.dzclxt.entity.vo.AppraiseVO;
 import com.zsdzxw.dzclxt.entity.vo.OrderVO;
 import com.zsdzxw.dzclxt.entity.vo.PageVO;
@@ -25,6 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,7 +47,7 @@ public class DczlxtController {
         if (user == null) {
             return Result.fail(1001,"用户名密码错误");
         }
-        user.setUserPassword("");
+        // user.setUserPassword("");
         return Result.success(user);
     }
 
@@ -74,6 +77,7 @@ public class DczlxtController {
         user.setLastLogin(new Date(System.currentTimeMillis()));
         return Result.success(dczlxtService.updateUser(user));
     }
+
 
     @PostMapping("/deleteUser")
     public Result deleteUser(@RequestBody UpdateUserDTO dto){
@@ -229,9 +233,21 @@ public class DczlxtController {
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
+
             Bike bike = dczlxtService.getBikeById(order.getBikeId());
             Appraise appraise = dczlxtService.getAppraiseByOrderId(order.getId());
             OrderVO orderVO = new OrderVO();
+            long sub;
+            try {
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDate start = LocalDate.parse(startTime, dateTimeFormatter);
+                LocalDate end = LocalDate.parse(endTime, dateTimeFormatter);
+                sub = Duration.between(LocalDateTime.of(start, LocalTime.of(0,0,0)),
+                        LocalDateTime.of(end, LocalTime.of(0,0,0))).toDays();
+            } catch (DateTimeParseException e) {
+                sub = -1;
+            }
+            orderVO.setRentalTime(sub);
             BeanUtils.copyProperties(order,orderVO);
             orderVO.setStartTimeStr(startTime);
             orderVO.setEndTimeStr(endTime);
