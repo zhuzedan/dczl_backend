@@ -69,4 +69,8 @@ public class Order implements Serializable {
      */
     private int orderStatus;
 
+    private String paymentTime;
+
+    private String alipayNo;
+
 }

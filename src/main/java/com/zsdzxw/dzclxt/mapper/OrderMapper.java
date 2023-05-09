@@ -2,12 +2,9 @@ package com.zsdzxw.dzclxt.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zsdzxw.dzclxt.entity.model.Order;
-
-import com.zsdzxw.dzclxt.entity.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -21,7 +18,7 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @return
      */
     @Select("select * from dczlxt_order where user_id = #{user_id} limit #{pageNo},#{pageSize}")
-    List<Order> getOrdersByUserId(@Param("user_id") Long userId , @Param("pageNo") Integer pageNo , @Param("pageSize") Integer pageSize);
+    List<Order> getOrdersByUserId(@Param("user_id") Long userId, @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize);
 
     /**
      * 通过自行车ID获取订单
@@ -38,12 +35,14 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @return
      */
     @Select("select * from dczlxt_order limit #{pageNo},#{pageSize}")
-    List<Order> getPageOrder(@Param("pageNo") Integer pageNo , @Param("pageSize") Integer pageSize);
+    List<Order> getPageOrder(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize);
 
     @Select("select * from dczlxt_order")
     List<Order> getAllOrder();
 
     @Select("select * from dczlxt_order where user_id = #{userId}")
     List<Order> getAllOrdersByUserId(@Param("userId") Long userId);
+
+    void updateState(String tradeNo, String 已支付, String gmtPayment, String alipayTradeNo);
 
 }
