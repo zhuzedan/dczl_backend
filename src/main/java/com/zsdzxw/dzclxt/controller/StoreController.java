@@ -63,7 +63,7 @@ public class StoreController {
     }
 
     @ApiOperation(value = "删除数据")
-    @DeleteMapping("deleteStore")
+    @DeleteMapping("/deleteStore")
     public Result delete(Long id) {
         boolean flag = storeService.removeById(id);
         if (flag) {

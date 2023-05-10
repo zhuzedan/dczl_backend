@@ -17,7 +17,7 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @param userId
      * @return
      */
-    @Select("select * from dczlxt_order where user_id = #{user_id} limit #{pageNo},#{pageSize}")
+    @Select("select * from dczlxt_order where user_id = #{user_id} order by id desc limit #{pageNo},#{pageSize}")
     List<Order> getOrdersByUserId(@Param("user_id") Long userId, @Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize);
 
     /**

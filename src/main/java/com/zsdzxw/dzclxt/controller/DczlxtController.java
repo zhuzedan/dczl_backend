@@ -297,6 +297,7 @@ public class DczlxtController {
     public Result getBikes(@RequestBody BikeFilterDto dto){
         Page<Bike> page = new Page<>(dto.getPageNo(), dto.getPageSize());
         LambdaQueryWrapper<Bike> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.orderByDesc(Bike::getInsertTime);
         if (!StringUtils.isEmpty(dto.getLowPrice())) {
             lambdaQueryWrapper.ge(Bike::getBikeCost,dto.getLowPrice());
         }
